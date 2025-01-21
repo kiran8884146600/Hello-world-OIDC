@@ -1,6 +1,6 @@
 provider "aws" {
   region = var.aws_region
-  version = "~> 4.0" 
+   
 }
 
 # Create the IAM role for Lambda
