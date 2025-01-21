@@ -1,5 +1,6 @@
 provider "aws" {
   region = var.aws_region
+  version = "~> 4.0" 
 }
 
 # Create the IAM role for Lambda
@@ -43,6 +44,11 @@ resource "aws_apigatewayv2_api" "hello-world-func_resource" {
   protocol_type = "HTTP"                # You can choose HTTP, WebSocket, etc.
 }
 
+resource "aws_apigatewayv2_route" "hello-world-route" {
+  api_id    = aws_apigatewayv2_api.hello-world-api.id
+  route_key = "GET /hello-world"
+  target    = "integrations/your-lambda-integration-id"
+}
 # Create an HTTP API route (e.g., /hello-world)
 resource "aws_apigatewayv2_resource" "hello-world-func_resource" {
   api_id   = aws_apigatewayv2_api.app_api.id
