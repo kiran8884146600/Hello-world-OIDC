@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 # Lambda Function
-resource "aws_lambda_function" "helloworld" {
+resource "aws_lambda_function" "hello-world-func" {
   function_name = var.lambda_function_name
   role          = var.lambda_role_arn
   handler       = "index.handler"
