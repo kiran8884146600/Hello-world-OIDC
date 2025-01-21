@@ -2,10 +2,34 @@ provider "aws" {
   region = var.aws_region
 }
 
+# Create the IAM role for Lambda
+resource "aws_iam_role" "lambda_exec" {
+  name = "lambda_exec_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# Attach the AWS Lambda basic execution role policy to the IAM role
+resource "aws_iam_role_policy_attachment" "lambda_logs_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role        = aws_iam_role.lambda_exec.name
+}
 # Lambda Function
 resource "aws_lambda_function" "hello-world-func" {
   function_name = var.lambda_function_name
-  role          = var.lambda_role_arn
+  role          = aws_iam_role.lambda_exec.arn
+  #role          = var.lambda_role_arn
   handler       = "index.handler"
   runtime       = "nodejs18.x"
   filename      = var.handler_zip_file
