@@ -21,7 +21,7 @@ resource "aws_iam_role" "lambda_exec" {
 }
 
 # Define the Lambda function (Make sure this is named hello_world_func exactly)
-resource "aws_lambda_function" "hello_world_function" {
+resource "aws_lambda_function" "hello_world_func" {
   function_name = "hello-world-func"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "index.handler"
