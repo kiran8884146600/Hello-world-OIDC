@@ -55,6 +55,11 @@ resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
   authorizer_type   = "JWT"
   name              = "cognito-authorizer"
   identity_sources  = ["$request.header.Authorization"]
+
+  jwt_configuration {
+    issuer   = var.issuer_url
+    audience = [var.client_id]
+  }
 }
 
 # Define routes for the API (GET and POST)
