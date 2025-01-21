@@ -7,7 +7,7 @@ resource "aws_lambda_function" "helloworld" {
   function_name = var.lambda_function_name
   role          = var.lambda_role_arn
   handler       = "index.handler"
-  runtime       = "nodejs14.x"
+  runtime       = "nodejs18.x"
   filename      = var.handler_zip_file
 
   # Ensure the file is deployed
