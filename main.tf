@@ -20,30 +20,25 @@ resource "aws_api_gateway_rest_api" "app_api" {
   name = var.api_name
 }
 
-# Resource (path)
-resource "aws_api_gateway_resource" "helloworld_resource" {
-  rest_api_id = aws_api_gateway_rest_api.app_api.id
-  parent_id   = aws_api_gateway_rest_api.app_api.root_resource_id
-  path_part   = "helloworld"
-}
 
-# Method (GET)
-resource "aws_api_gateway_method" "helloworld_method" {
+# API Gateway Method (e.g., GET method on /hello-world)
+resource "aws_api_gateway_method" "hello-world-func_method" {
   rest_api_id   = aws_api_gateway_rest_api.app_api.id
-  resource_id   = aws_api_gateway_resource.helloworld_resource.id
+  resource_id   = aws_api_gateway_resource.hello-world-func_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "NONE"  # Adjust as needed, e.g., use AWS_IAM for authorization
 }
 
-# Integration
+# API Gateway Integration to Lambda
 resource "aws_api_gateway_integration" "lambda_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.app_api.id
+  rest_api_id             = aws_api_gateway_rest_api.example.id
   resource_id             = aws_api_gateway_resource.hello-world-func_resource.id
   http_method             = aws_api_gateway_method.hello-world-func_method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.hello-world-func.invoke_arn
+  uri                     = aws_lambda_function.hello-world-func.invoke_arn  # Ensure this is correct
 }
+
 
 # Deployment
 resource "aws_api_gateway_deployment" "api_deployment" {
@@ -52,11 +47,10 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   stage_name  = var.stage_name
 }
 
-# Lambda Permission
+# Lambda Permission to allow API Gateway to invoke the Lambda function
 resource "aws_lambda_permission" "api_permission" {
-  statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.hello-world-func.arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.app_api.execution_arn}/*/*"
 }
