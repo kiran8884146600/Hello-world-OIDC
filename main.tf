@@ -39,26 +39,26 @@ resource "aws_lambda_function" "hello-world-func" {
   source_code_hash = filebase64sha256("./handler.zip")
 }
 
-resource "aws_apigatewayv2_api" "hello-world-func_resource" {
-  name          = "hello-world-api"     # Provide a name for your API
+resource "aws_apigateway_api" "hello-world-func_resource" {
+  name          = "app-api"     # Provide a name for your API
   protocol_type = "HTTP"                # You can choose HTTP, WebSocket, etc.
 }
 
-resource "aws_apigatewayv2_route" "hello-world-route" {
-  api_id    = aws_apigatewayv2_api.hello-world-api.id
+resource "aws_apigateway_route" "hello-world-route" {
+  api_id    = aws_apigateway_api.hello-world-api.id
   route_key = "GET /hello-world"
   target    = "integrations/your-lambda-integration-id"
 }
 # Create an HTTP API route (e.g., /hello-world)
-resource "aws_apigatewayv2_resource" "hello-world-func_resource" {
-  api_id   = aws_apigatewayv2_api.app_api.id
-  parent_id = aws_apigatewayv2_api.hello-world-func_resource.api_endpoint
+resource "aws_apigateway_resource" "hello-world-func_resource" {
+  api_id   = aws_apigateway_api.app_api.id
+  parent_id = aws_apigateway_api.hello-world-func_resource.api_endpoint
   path_part = "hello-world-func"
 }
 
 # Create Cognito User Pool Authorizer for HTTP API
-resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
-  api_id            = aws_apigatewayv2_api.app_api.id
+resource "aws_apigateway_authorizer" "cognito_authorizer" {
+  api_id            = aws_apigateway_api.app_api.id
   authorizer_type   = "JWT"
   name              = "CognitoAuthorizer"
   identity_sources  = ["$request.header.Authorization"]
@@ -69,8 +69,8 @@ resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
 }
 
 # API Gateway Integration to Lambda
-resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id                = aws_apigatewayv2_api.app_api.id
+resource "aws_apigateway_integration" "lambda_integration" {
+  api_id                = aws_apigateway_api.app_api.id
   integration_type      = "AWS_PROXY"
   integration_method    = "POST"
   integration_uri       = aws_lambda_function.hello-world-func.invoke_arn
@@ -78,18 +78,18 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
 }
 
 # Create HTTP API route method (GET) with Cognito JWT Authorizer
-resource "aws_apigatewayv2_route" "hello-world-func_route" {
-  api_id             = aws_apigatewayv2_api.app_api.id
+resource "aws_apigateway_route" "hello-world-func_route" {
+  api_id             = aws_apigateway_api.app_api.id
   route_key          = "GET /hello-world"
-  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  target             = "integrations/${aws_apigateway_integration.lambda_integration.id}"
   authorization_type = "JWT"
-  authorizer_id      = aws_apigatewayv2_authorizer.cognito_authorizer.id
+  authorizer_id      = aws_apigateway_authorizer.cognito_authorizer.id
 }
 
 # Deployment of the API
-resource "aws_apigatewayv2_deployment" "api_deployment" {
-  depends_on  = [aws_apigatewayv2_route.hello-world-func_route]
-  api_id      = aws_apigatewayv2_api.app_api.id
+resource "aws_apigateway_deployment" "api_deployment" {
+  depends_on  = [aws_apigateway_route.hello-world-func_route]
+  api_id      = aws_apigateway_api.app_api.id
 }
 
 # Lambda Permission to allow API Gateway to invoke the Lambda function
@@ -102,5 +102,5 @@ resource "aws_lambda_permission" "api_permission" {
 
 # Output API Gateway URL for easy access
 output "api_url" {
-  value = aws_apigatewayv2_api.app_api.api_endpoint
+  value = aws_apigateway_api.app_api.api_endpoint
 }
