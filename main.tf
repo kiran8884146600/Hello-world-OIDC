@@ -28,8 +28,8 @@ resource "aws_iam_role_policy_attachment" "lambda_logs_policy" {
 }
 
 # Lambda Function
-resource "aws_lambda_function" "hello-world-func" {
-  function_name = "hello-world-function"
+resource "aws_lambda_function" "hello_world_function" {
+  function_name = "hello_world_func"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "index.handler"
   runtime       = "nodejs18.x"
