@@ -54,6 +54,6 @@ variable "issuer_url" {
 variable "client_id" {
   description = "The client ID for the Cognito App Client"
   type        = string
-  default     = "1jk55nbmismv4a5cm2quvbkhnl"
+  default     = "2372bcb485e4jg2bsrmekejnkh"
 }
 
