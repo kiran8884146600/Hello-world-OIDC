@@ -45,4 +45,15 @@ variable "cognito_user_pool_id" {
   type        = string
   default     = "us-east-1_uhH5gxPJF"
 }
+variable "issuer_url" {
+  description = "The issuer URL of the Cognito User Pool"
+  type        = string
+  default     = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_uhH5gxPJF"
+}
+
+variable "client_id" {
+  description = "The client ID for the Cognito App Client"
+  type        = string
+  default     = "2372bcb485e4jg2bsrmekejnkh"
+}
 
