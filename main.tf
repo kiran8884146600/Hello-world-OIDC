@@ -27,17 +27,7 @@ resource "aws_lambda_function" "hello_world_func" {
   handler       = "index.handler"
   runtime       = "nodejs18.x"
 
-  # Inline Lambda code
-  code {
-    zip_file = <<EOF
-      exports.handler = async (event) => {
-        return {
-          statusCode: 200,
-          body: JSON.stringify({ message: 'Hello, World!' }),
-        };
-      };
-    EOF
-  }
+ 
 }
 
 # Define the API Gateway V2 API
