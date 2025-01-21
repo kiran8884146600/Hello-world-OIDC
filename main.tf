@@ -19,6 +19,11 @@ resource "aws_iam_role" "lambda_exec" {
     ]
   })
 }
+# Attach the AWS Lambda basic execution role policy to the IAM role
+resource "aws_iam_role_policy_attachment" "lambda_logs_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role        = aws_iam_role.lambda_exec.name
+}
 
 # Define the Lambda function (Make sure this is named hello_world_func exactly)
 resource "aws_lambda_function" "hello_world_func" {
