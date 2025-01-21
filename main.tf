@@ -1,6 +1,5 @@
 provider "aws" {
   region = var.aws_region
-   
 }
 
 # Define IAM role for Lambda function execution (assuming it doesn't exist already)
@@ -19,6 +18,7 @@ resource "aws_iam_role" "lambda_exec" {
     ]
   })
 }
+
 # Attach the AWS Lambda basic execution role policy to the IAM role
 resource "aws_iam_role_policy_attachment" "lambda_logs_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -36,9 +36,6 @@ resource "aws_lambda_function" "hello_world_func" {
   # Ensure the file is deployed
   source_code_hash = filebase64sha256("./handler.zip")
 }
-
- 
-
 
 # Define the API Gateway V2 API
 resource "aws_apigatewayv2_api" "hello_world_api" {
@@ -69,26 +66,38 @@ resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
 
 # Define routes for the API (GET and POST)
 resource "aws_apigatewayv2_route" "hello_world_route" {
-  api_id    = aws_apigatewayv2_api.hello_world_api.id
-  route_key = "GET /hello"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  api_id           = aws_apigatewayv2_api.hello_world_api.id
+  route_key        = "GET /hello"
+  target           = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "JWT"
+  authorizer_id     = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
 resource "aws_apigatewayv2_route" "hello_world_func_route" {
-  api_id        = aws_apigatewayv2_api.hello_world_api.id
-  route_key     = "POST /hello"
-  target        = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  api_id           = aws_apigatewayv2_api.hello_world_api.id
+  route_key        = "POST /hello"
+  target           = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "JWT"
+  authorizer_id     = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
 # Deploy the API Gateway V2
 resource "aws_apigatewayv2_deployment" "api_deployment" {
   api_id        = aws_apigatewayv2_api.hello_world_api.id
-  depends_on    = [aws_apigatewayv2_route.hello_world_func_route]
+  depends_on    = [
+    aws_apigatewayv2_route.hello_world_route,
+    aws_apigatewayv2_route.hello_world_func_route
+  ]
+}
+
+# Define the Stage for API Gateway deployment
+resource "aws_apigatewayv2_stage" "api_stage" {
+  api_id        = aws_apigatewayv2_api.hello_world_api.id
+  name          = "dev"  # The stage name (e.g., 'dev', 'prod')
+  deployment_id = aws_apigatewayv2_deployment.api_deployment.id
 }
 
 # Output the API Gateway URL
 output "api_url" {
-  value = aws_apigatewayv2_api.hello_world_api.api_endpoint
+  value = "https://${aws_apigatewayv2_api.hello_world_api.api_endpoint}/${aws_apigatewayv2_stage.api_stage.name}"
 }
-
-
