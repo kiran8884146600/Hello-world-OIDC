@@ -45,7 +45,7 @@ resource "aws_apigatewayv2_api" "app_api" {
 }
 
 # Create an HTTP API route (e.g., /hello-world)
-resource "aws_apigatewayv2_resource" "hello-world-func_resource" {
+resource "aws_apigatewayv2_api" "hello-world-func_resource" {
   api_id   = aws_apigatewayv2_api.app_api.id
   parent_id = aws_apigatewayv2_api.app_api.api_endpoint
   path_part = "hello-world"
