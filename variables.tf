@@ -34,3 +34,20 @@ variable "stage_name" {
   type        = string
   default     = "dev"
 }
+variable "cognito_user_pool_client_id" {
+  description = "The client ID of your Cognito User Pool"
+  type        = string
+  default     = "2372bcb485e4jg2bsrmekejnkh"
+}
+
+variable "cognito_user_pool_id" {
+  description = "The ID of your Cognito User Pool"
+  type        = string
+  default     = "us-east-1_uhH5gxPJF"
+}
+
+variable "aws_region" {
+  description = "The AWS region where resources will be deployed"
+  type        = string
+  default     = "us-east-1"  # Set your desired region
+}
