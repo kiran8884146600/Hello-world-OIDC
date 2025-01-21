@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
+
 }
 
 # Define IAM role for Lambda function execution (assuming it doesn't exist already)
@@ -37,14 +38,6 @@ resource "aws_lambda_function" "hello_world_func" {
   source_code_hash = filebase64sha256("./handler.zip")
 }
 
-# Allow API Gateway to invoke the Lambda function
-resource "aws_lambda_permission" "allow_apigateway" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  principal     = "apigateway.amazonaws.com"
-  function_name = aws_lambda_function.hello_world_func.function_name
-}
-
 # Define the API Gateway V2 API
 resource "aws_apigatewayv2_api" "hello_world_api" {
   name          = "hello-world-api"
@@ -53,9 +46,9 @@ resource "aws_apigatewayv2_api" "hello_world_api" {
 
 # Define the Lambda integration with API Gateway V2
 resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id                 = aws_apigatewayv2_api.hello_world_api.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = aws_lambda_function.hello_world_func.invoke_arn
+  api_id             = aws_apigatewayv2_api.hello_world_api.id
+  integration_type   = "AWS_PROXY"
+  integration_uri    = aws_lambda_function.hello_world_func.invoke_arn
   payload_format_version = "2.0"
 }
 
@@ -77,14 +70,16 @@ resource "aws_apigatewayv2_route" "hello_world_route" {
   api_id           = aws_apigatewayv2_api.hello_world_api.id
   route_key        = "GET /hello"
   target           = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-  authorization_type = "NONE"  # Temporarily disable JWT authorization
+  authorization_type = "JWT"
+  authorizer_id     = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
 resource "aws_apigatewayv2_route" "hello_world_func_route" {
   api_id           = aws_apigatewayv2_api.hello_world_api.id
   route_key        = "POST /hello"
   target           = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-  authorization_type = "NONE"  # Temporarily disable JWT authorization
+  authorization_type = "JWT"
+  authorizer_id     = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
 # Deploy the API Gateway V2
