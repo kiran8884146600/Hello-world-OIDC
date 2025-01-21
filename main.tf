@@ -22,8 +22,8 @@ resource "aws_api_gateway_rest_api" "app_api" {
 
 # Create a resource (e.g., /hello-world) under the API
 resource "aws_api_gateway_resource" "hello-world-func_resource" {
-  rest_api_id = aws_api_gateway_rest_api.example.id
-  parent_id   = aws_api_gateway_rest_api.example.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.app_api.id
+  parent_id   = aws_api_gateway_rest_api.app_api.root_resource_id
   path_part   = "hello-world-func"  # This will define the path /hello-world
 }
 # API Gateway Method (e.g., GET method on /hello-world)
