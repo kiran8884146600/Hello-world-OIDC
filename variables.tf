@@ -23,10 +23,10 @@ variable "handler_zip_file" {
   default     = "./handler.zip"
 }
 
-variable "api_name" {
-  description = "Name of the API Gateway REST API."
-  type        = string
-  default     = "APP-API"
+#variable "api_name" {
+ # description = "Name of the API Gateway REST API."
+  #type        = string
+  #default     = "APP-API"
 }
 
 variable "stage_name" {
