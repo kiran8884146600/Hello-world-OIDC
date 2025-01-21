@@ -33,7 +33,7 @@ resource "aws_lambda_function" "hello_world_function" {
 }
 
  
-}
+
 
 # Define the API Gateway V2 API
 resource "aws_apigatewayv2_api" "hello_world_api" {
