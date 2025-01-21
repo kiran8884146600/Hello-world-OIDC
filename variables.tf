@@ -46,8 +46,3 @@ variable "cognito_user_pool_id" {
   default     = "us-east-1_uhH5gxPJF"
 }
 
-variable "aws_region" {
-  description = "The AWS region where resources will be deployed"
-  type        = string
-  default     = "us-east-1"  # Set your desired region
-}
