@@ -65,7 +65,7 @@ resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
   }
 }
 
-# Define routes for the API (GET and POST)
+# Define routes for the API (GET )
 resource "aws_apigatewayv2_route" "hello_world_route" {
   api_id           = aws_apigatewayv2_api.hello_world_api.id
   route_key        = "GET /hello"
@@ -74,13 +74,7 @@ resource "aws_apigatewayv2_route" "hello_world_route" {
   authorizer_id     = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
-resource "aws_apigatewayv2_route" "hello_world_func_route" {
-  api_id           = aws_apigatewayv2_api.hello_world_api.id
-  route_key        = "POST /hello"
-  target           = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-  authorization_type = "JWT"
-  authorizer_id     = aws_apigatewayv2_authorizer.cognito_authorizer.id
-}
+
 
 # Deploy the API Gateway V2
 resource "aws_apigatewayv2_deployment" "api_deployment" {
@@ -98,7 +92,4 @@ resource "aws_apigatewayv2_stage" "api_stage" {
   deployment_id = aws_apigatewayv2_deployment.api_deployment.id
 }
 
-# Output the API Gateway URL
-output "api_endpoint" {
-  value = aws_apigatewayv2_api.hello_world_api.api_endpoint
-}
+
