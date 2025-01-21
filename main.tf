@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.aws_region
+  region = us-east-1
 }
 
 # Define IAM role for Lambda function execution (assuming it doesn't exist already)
@@ -98,7 +98,6 @@ resource "aws_apigatewayv2_stage" "api_stage" {
 }
 
 # Output the API Gateway URL
-output "api_url" {
-  value = "https://${aws_apigatewayv2_api.hello_world_api.api_endpoint}/dev"
+output "api_endpoint" {
+  value = aws_apigatewayv2_api.hello_world_api.api_endpoint
 }
-
