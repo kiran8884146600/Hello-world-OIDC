@@ -98,7 +98,7 @@ resource "aws_apigatewayv2_stage" "api_stage" {
 }
 
 # Output the API Gateway URL
-output "api_endpoint" {
-  value = aws_apigatewayv2_api.hello_world_api.api_endpoint
+output "api_url" {
+  value = "https://${aws_apigatewayv2_api.hello_world_api.api_endpoint}/dev"
 }
 
