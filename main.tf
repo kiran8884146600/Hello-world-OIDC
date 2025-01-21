@@ -81,7 +81,7 @@ resource "aws_apigatewayv2_deployment" "api_deployment" {
   api_id        = aws_apigatewayv2_api.hello_world_api.id
   depends_on    = [
     aws_apigatewayv2_route.hello_world_route,
-    aws_apigatewayv2_route.hello_world_func_route
+    
   ]
 }
 
