@@ -27,7 +27,7 @@ variable "handler_zip_file" {
  # description = "Name of the API Gateway REST API."
   #type        = string
   #default     = "APP-API"
-}
+#}
 
 variable "stage_name" {
   description = "The deployment stage name for the API."
