@@ -8,7 +8,7 @@ variable "aws_region" {
 variable "lambda_function_name" {
   description = "Name of the Lambda function."
   type        = string
-  default     = "Hello-world-func"
+  default     = "hello-world-func"
 }
 
 variable "lambda_role_arn" {
