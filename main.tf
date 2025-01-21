@@ -38,17 +38,16 @@ resource "aws_lambda_function" "hello-world-func" {
   source_code_hash = filebase64sha256("./handler.zip")
 }
 
-# Create HTTP API Gateway
-resource "aws_apigatewayv2_api" "app_api" {
-  name          = var.api_name
-  protocol_type = "HTTP"
+resource "aws_apigatewayv2_api" "hello-world-func_resource" {
+  name          = "hello-world-api"     # Provide a name for your API
+  protocol_type = "HTTP"                # You can choose HTTP, WebSocket, etc.
 }
 
 # Create an HTTP API route (e.g., /hello-world)
-resource "aws_apigatewayv2_api" "hello-world-func_resource" {
+resource "aws_apigatewayv2_resource" "hello-world-func_resource" {
   api_id   = aws_apigatewayv2_api.app_api.id
-  parent_id = aws_apigatewayv2_api.app_api.api_endpoint
-  path_part = "hello-world"
+  parent_id = parent_id = aws_apigatewayv2_api.hello-world-func_resource.api_endpoint
+  path_part = "hello-world-func"
 }
 
 # Create Cognito User Pool Authorizer for HTTP API
