@@ -37,7 +37,7 @@ variable "stage_name" {
 variable "cognito_user_pool_client_id" {
   description = "The client ID of your Cognito User Pool"
   type        = string
-  default     = "2372bcb485e4jg2bsrmekejnkh"
+  default     = "6jp4oqhobmstfs42j5b8u28ll5"
 }
 
 variable "cognito_user_pool_id" {
@@ -54,6 +54,6 @@ variable "issuer_url" {
 variable "client_id" {
   description = "The client ID for the Cognito App Client"
   type        = string
-  default     = "2372bcb485e4jg2bsrmekejnkh"
+  default     = "6jp4oqhobmstfs42j5b8u28ll5"
 }
 
