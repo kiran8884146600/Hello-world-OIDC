@@ -37,23 +37,23 @@ variable "stage_name" {
 variable "cognito_user_pool_client_id" {
   description = "The client ID of your Cognito User Pool"
   type        = string
-  default     = "6jp4oqhobmstfs42j5b8u28ll5"
+  default     = "2jdjkd75ce651qcl9lkhba2fin"
 }
 
 variable "cognito_user_pool_id" {
   description = "The ID of your Cognito User Pool"
   type        = string
-  default     = "us-east-1_uhH5gxPJF"
+  default     = "us-east-1_qEXGjuTNS"
 }
 variable "issuer_url" {
   description = "The issuer URL of the Cognito User Pool"
   type        = string
-  default     = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_uhH5gxPJF"
+  default     = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_qEXGjuTNS"
 }
 
 variable "client_id" {
   description = "The client ID for the Cognito App Client"
   type        = string
-  default     = "6jp4oqhobmstfs42j5b8u28ll5"
+  default     = "2jdjkd75ce651qcl9lkhba2fin"
 }
 
