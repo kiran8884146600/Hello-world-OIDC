@@ -37,3 +37,57 @@ aws_region      = "us-east-1"
 handler_zip_file = "./handler.zip"
 issuer_url      = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123xyz"
 client_id       = "your-cognito-client-id"
+
+
+
+
+# Deploy to AWS with GitHub Actions
+
+This repository contains a GitHub Actions workflow to automate the deployment of your infrastructure to AWS using Terraform. The workflow is triggered on a push to the `main` branch and performs the following steps:
+
+1. Checks out the repository.
+2. Sets up Terraform.
+3. Configures AWS credentials using OpenID Connect (OIDC).
+4. Installs `zip` (if not already installed).
+5. Creates a deployment package (ZIP file) for your Lambda function.
+6. Initializes and applies the Terraform configuration.
+
+## Workflow Overview
+
+The workflow is defined in the `.github/workflows/deploy.yml` file and consists of the following steps:
+
+### Trigger
+- The workflow runs on a `push` event to the `main` branch.
+
+### Permissions
+- `id-token: write`: Required for OIDC authentication with AWS.
+- `contents: read`: Required to read the repository contents.
+
+### Jobs
+1. **Checkout Repository**: Checks out the repository code.
+2. **Set Up Terraform**: Installs the specified version of Terraform (1.5.0).
+3. **Configure AWS Credentials**: Uses OIDC to assume an IAM role in AWS.
+4. **Install Zip**: Installs the `zip` utility to create a deployment package.
+5. **Create Deployment Package**: Zips the repository contents (adjust as needed for your Lambda function).
+6. **Terraform Init**: Initializes the Terraform working directory.
+7. **Terraform Apply**: Applies the Terraform configuration automatically (`-auto-approve`).
+
+## Prerequisites
+
+Before using this workflow, ensure you have the following:
+
+1. **AWS IAM Role**: An IAM role with the necessary permissions for Terraform to create and manage resources in your AWS account.
+2. **OIDC Provider in AWS**: Configure an OIDC identity provider in your AWS account for GitHub Actions. Follow the [official guide](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services).
+3. **Secrets in GitHub Repository**:
+   - `AWS_ROLE_ARN`: The ARN of the IAM role to assume.
+   - `AWS_REGION`: The AWS region where resources will be deployed.
+
+## How to Use
+
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+
+
+
