@@ -41,6 +41,20 @@ resource "aws_apigatewayv2_api" "hello_world_api" {
   protocol_type = "HTTP"
 }
 
+# Cognito User Pool 
+resource "aws_cognito_user_pool" "my_user_pool" {
+  name = "my-user-pool"
+}
+
+# Cognito Authorizer for API Gateway
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  name               = "cognito-authorizer"
+  api_id             = aws_apigatewayv2_api.hello_world_api.id
+  authorizer_type    = "COGNITO_USER_POOLS"
+  identity_source    = "$request.header.Authorization"
+  provider_arns      = [aws_cognito_user_pool.my_user_pool.arn]
+}
+
 # Lambda Integration
 resource "aws_apigatewayv2_integration" "lambda_integration" {
   api_id                 = aws_apigatewayv2_api.hello_world_api.id
