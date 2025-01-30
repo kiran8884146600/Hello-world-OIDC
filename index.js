@@ -4,7 +4,7 @@ exports.handler = async (event) => {
         headers: {
             "Content-Type": "text/html",
         },
-        body: "<h1>Hello, World!</h1>",
+        body: "<h1>Hello, !</h1>",
     };
 };
 
