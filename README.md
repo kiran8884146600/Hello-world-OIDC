@@ -40,6 +40,9 @@ client_id       = "your-cognito-client-id"
 
 
 
+CI-CD
+
+
 
 # Deploy to AWS with GitHub Actions
 
@@ -88,6 +91,3 @@ Before using this workflow, ensure you have the following:
    ```bash
    git clone <repository-url>
    cd <repository-directory>
-
-
-
