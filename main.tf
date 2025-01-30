@@ -55,7 +55,7 @@ resource "aws_apigatewayv2_route" "hello_world_route" {
   route_key        = "GET /hello"
   target           = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
   authorization_type = "JWT"
-  authorizer_id    = aws_apigatewayv2_authorizer.cognito_authorizer.id
+  
 }
 
 # Route for root path (/)
