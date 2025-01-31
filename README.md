@@ -1,24 +1,33 @@
-Hello World Application
+markdown
+Copy
+# Hello World Application
+
 This is a simple "Hello World" application deployed on AWS using Terraform. The application consists of an AWS Lambda function that returns a "Hello, World!" message via an API Gateway endpoint. The infrastructure is managed using Terraform, and the deployment is automated using a CI/CD workflow.
 
-Project Structure
-The project is structured as follows:
+---
 
-Copy
+## Project Structure
+
+The project is structured as follows:
 hello-world-app/
 ├── src/
-│   ├── index.js                # Lambda function code
-│   └── handler.zip             # Zipped Lambda deployment package
-├── main.tf                     # Terraform configuration for AWS resources
-├── variables.tf                # Terraform variables
-├── backend.tf                  # Terraform backend configuration
+│ ├── index.js # Lambda function code
+│ └── handler.zip # Zipped Lambda deployment package
+├── main.tf # Terraform configuration for AWS resources
+├── variables.tf # Terraform variables
+├── backend.tf # Terraform backend configuration
 └── .github/workflows/ci-cd.yml # CI/CD workflow for deployment
-File Descriptions
-1. index.js
+
+Copy
+
+---
+
+## File Descriptions
+
+### 1. **`index.js`**
 This file contains the Lambda function code. It is a simple Node.js function that returns a "Hello, World!" message as an HTTP response.
 
-javascript
-Copy
+```javascript
 exports.handler = async (event) => {
     return {
         statusCode: 200,
@@ -164,3 +173,11 @@ You should receive the following response:
 html
 Copy
 <h1>Hello, World!</h1>
+Run HTML
+Cleanup
+To destroy the resources created by Terraform, run:
+
+bash
+Copy
+terraform destroy -auto-approve
+This will remove all AWS resources associated with the application.
