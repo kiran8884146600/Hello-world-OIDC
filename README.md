@@ -1,93 +1,166 @@
-# AWS Lambda with API Gateway and Cognito Authorizer
+Hello World Application
+This is a simple "Hello World" application deployed on AWS using Terraform. The application consists of an AWS Lambda function that returns a "Hello, World!" message via an API Gateway endpoint. The infrastructure is managed using Terraform, and the deployment is automated using a CI/CD workflow.
 
-This repository contains Terraform code to deploy an AWS Lambda function integrated with an API Gateway (HTTP API) and secured using a Cognito Authorizer.
+Project Structure
+The project is structured as follows:
 
-## Overview
+Copy
+hello-world-app/
+├── src/
+│   ├── index.js                # Lambda function code
+│   └── handler.zip             # Zipped Lambda deployment package
+├── main.tf                     # Terraform configuration for AWS resources
+├── variables.tf                # Terraform variables
+├── backend.tf                  # Terraform backend configuration
+└── .github/workflows/ci-cd.yml # CI/CD workflow for deployment
+File Descriptions
+1. index.js
+This file contains the Lambda function code. It is a simple Node.js function that returns a "Hello, World!" message as an HTTP response.
 
-The Terraform configuration in this repository provisions the following AWS resources:
+javascript
+Copy
+exports.handler = async (event) => {
+    return {
+        statusCode: 200,
+        headers: {
+            "Content-Type": "text/html",
+        },
+        body: "<h1>Hello, World!</h1>",
+    };
+};
+Why we use it:
+This is the core logic of the application. It defines the behavior of the Lambda function when invoked.
 
-1. **IAM Role for Lambda Execution**: Creates an IAM role with the necessary permissions for the Lambda function to execute.
-2. **AWS Lambda Function**: Deploys a Node.js-based Lambda function (`hello-world-func`) with a handler named `index.handler`.
-3. **API Gateway (HTTP API)**: Sets up an HTTP API with a single route (`GET /hello`) that triggers the Lambda function.
-4. **Cognito Authorizer**: Configures a JWT-based authorizer using Cognito to secure the API Gateway route.
-5. **API Gateway Deployment and Stage**: Deploys the API Gateway and creates a `dev` stage for the API.
+2. handler.zip
+This is the zipped deployment package for the Lambda function. It contains the index.js file and any other dependencies required for the Lambda function to run.
 
-## Prerequisites
+Why we use it:
+AWS Lambda requires the function code to be uploaded as a deployment package. Zipping the code ensures that all necessary files are included and ready for deployment.
 
-Before using this Terraform configuration, ensure you have the following:
+3. main.tf
+This file contains the Terraform configuration for defining AWS resources. It includes:
 
-1. **Terraform Installed**: Install Terraform from [here](https://www.terraform.io/downloads.html).
-2. **AWS CLI Configured**: Set up your AWS credentials using the AWS CLI or environment variables.
-3. **Node.js Lambda Handler**: A ZIP file containing the Node.js Lambda function code (e.g., `handler.zip`).
-4. **Cognito User Pool**: A Cognito User Pool and App Client configured with the necessary `issuer_url` and `client_id`.
+AWS provider configuration.
 
-## Variables
+IAM role for Lambda execution.
 
-The following variables are required to be set in a `terraform.tfvars` file or passed via the command line:
+Lambda function definition.
 
-- `aws_region`: The AWS region where resources will be deployed (e.g., `us-east-1`).
-- `handler_zip_file`: The path to the ZIP file containing the Lambda function code (e.g., `./handler.zip`).
-- `issuer_url`: The issuer URL for the Cognito User Pool (e.g., `https://cognito-idp.<region>.amazonaws.com/<user-pool-id>`).
-- `client_id`: The client ID of the Cognito App Client.
+API Gateway configuration with routes and integrations.
 
-Example `terraform.tfvars` file:
+Cognito authorizer for API Gateway.
 
-```hcl
-aws_region      = "us-east-1"
-handler_zip_file = "./handler.zip"
-issuer_url      = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123xyz"
-client_id       = "your-cognito-client-id"
+Why we use it:
+Terraform is used to define and provision infrastructure as code. This file ensures that all AWS resources (Lambda, API Gateway, IAM roles, etc.) are created and configured consistently.
 
+4. variables.tf
+This file defines input variables for the Terraform configuration. It includes variables such as:
 
+aws_region: The AWS region to deploy resources.
 
-CI-CD
+lambda_function_name: Name of the Lambda function.
 
+handler_zip_file: Path to the Lambda deployment package.
 
+cognito_user_pool_client_id: Client ID for Cognito User Pool.
 
-# Deploy to AWS with GitHub Actions
+issuer_url: Issuer URL for Cognito.
 
-This repository contains a GitHub Actions workflow to automate the deployment of your infrastructure to AWS using Terraform. The workflow is triggered on a push to the `main` branch and performs the following steps:
+Why we use it:
+Variables make the Terraform configuration reusable and customizable. They allow you to define values once and reuse them across multiple resources.
 
-1. Checks out the repository.
-2. Sets up Terraform.
-3. Configures AWS credentials using OpenID Connect (OIDC).
-4. Installs `zip` (if not already installed).
-5. Creates a deployment package (ZIP file) for your Lambda function.
-6. Initializes and applies the Terraform configuration.
+5. backend.tf
+This file configures the Terraform backend to store the state file in an S3 bucket.
 
-## Workflow Overview
+hcl
+Copy
+terraform {
+  backend "s3" {
+    bucket = "kiran271222"
+    key    = "myfold/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+Why we use it:
+Storing the Terraform state file in a remote backend (like S3) ensures that the state is shared and consistent across team members and CI/CD pipelines. It also prevents conflicts when multiple users are working on the same infrastructure.
 
-The workflow is defined in the `.github/workflows/deploy.yml` file and consists of the following steps:
+6. .github/workflows/ci-cd.yml
+This file defines the GitHub Actions workflow for CI/CD. It automates the deployment process whenever changes are pushed to the main branch. The workflow includes steps to:
 
-### Trigger
-- The workflow runs on a `push` event to the `main` branch.
+Check out the repository.
 
-### Permissions
-- `id-token: write`: Required for OIDC authentication with AWS.
-- `contents: read`: Required to read the repository contents.
+Set up Terraform.
 
-### Jobs
-1. **Checkout Repository**: Checks out the repository code.
-2. **Set Up Terraform**: Installs the specified version of Terraform (1.5.0).
-3. **Configure AWS Credentials**: Uses OIDC to assume an IAM role in AWS.
-4. **Install Zip**: Installs the `zip` utility to create a deployment package.
-5. **Create Deployment Package**: Zips the repository contents (adjust as needed for your Lambda function).
-6. **Terraform Init**: Initializes the Terraform working directory.
-7. **Terraform Apply**: Applies the Terraform configuration automatically (`-auto-approve`).
+Configure AWS credentials using OIDC.
 
-## Prerequisites
+Create a deployment package (handler.zip).
 
-Before using this workflow, ensure you have the following:
+Initialize and apply the Terraform configuration.
 
-1. **AWS IAM Role**: An IAM role with the necessary permissions for Terraform to create and manage resources in your AWS account.
-2. **OIDC Provider in AWS**: Configure an OIDC identity provider in your AWS account for GitHub Actions. Follow the [official guide](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services).
-3. **Secrets in GitHub Repository**:
-   - `AWS_ROLE_ARN`: The ARN of the IAM role to assume.
-   - `AWS_REGION`: The AWS region where resources will be deployed.
+Why we use it:
+CI/CD pipelines automate the deployment process, ensuring that changes are tested and deployed consistently. This reduces manual errors and speeds up the development cycle.
 
-## How to Use
+Prerequisites
+Before deploying the application, ensure you have the following:
 
-1. **Clone the Repository**:
-   ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+AWS Account: An AWS account with sufficient permissions to create Lambda functions, API Gateway, IAM roles, and S3 buckets.
+
+Terraform: Terraform installed on your local machine or CI/CD environment.
+
+Node.js: Node.js installed (version 18.x) for testing the Lambda function locally.
+
+AWS CLI: AWS CLI configured with your credentials.
+
+GitHub Secrets: Configure the following secrets in your GitHub repository:
+
+AWS_ROLE_ARN: The ARN of the IAM role to assume in the CI/CD workflow.
+
+AWS_REGION: The AWS region to deploy resources (e.g., us-east-1).
+
+Deployment Steps
+1. Clone the Repository
+Clone the repository to your local machine:
+
+bash
+Copy
+git clone https://github.com/your-username/hello-world-app.git
+cd hello-world-app
+2. Initialize Terraform
+Run the following command to initialize Terraform and download the required providers:
+
+bash
+Copy
+terraform init
+3. Review Terraform Plan
+Review the Terraform execution plan to ensure the resources will be created as expected:
+
+bash
+Copy
+terraform plan
+4. Apply Terraform Configuration
+Deploy the infrastructure by applying the Terraform configuration:
+
+bash
+Copy
+terraform apply -auto-approve
+This will create the following resources:
+
+IAM role for the Lambda function.
+
+Lambda function with the provided handler.zip deployment package.
+
+API Gateway with a /hello route integrated with the Lambda function.
+
+Cognito authorizer for API Gateway.
+
+5. Test the Application
+Once the deployment is complete, you can test the application by sending a GET request to the API Gateway endpoint:
+
+bash
+Copy
+curl https://<api-gateway-id>.execute-api.<region>.amazonaws.com/dev/hello
+You should receive the following response:
+
+html
+Copy
+<h1>Hello, World!</h1>
